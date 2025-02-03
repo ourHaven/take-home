@@ -1,0 +1,40 @@
+# Queries to retrieve data
+type Query {
+  users: [User!]! @all
+  user(id: ID!): User @find
+  organizations: [Organization!]! @all
+  wallets: [Wallet!]! @all
+}
+
+# Mutations to create or update data
+type Mutation {
+  createOrganization(name: String!, reset_interval_days: Int!): Organization @create
+  createUser(name: String!, email: String!, organization_id: ID): User @create
+  updateOrganization(id: ID!, reset_interval_days: Int!): Organization @update
+}
+
+# Organization type representing an organization
+type Organization {
+  id: ID!
+  name: String!
+  reset_interval_days: Int!
+  users: [User!]! @hasMany
+}
+
+# User type representing an individual user
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  joined_at: DateTime!
+  organization: Organization @belongsTo
+  wallet: Wallet @hasOne
+}
+
+# Wallet type representing the user's wallet and balance
+type Wallet {
+  id: ID!
+  user: User @belongsTo
+  balance: Float!
+  last_reset_at: DateTime
+}
