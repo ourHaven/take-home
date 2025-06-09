@@ -19,6 +19,12 @@ type Query {
     ): [User!]! @paginate(defaultCount: 10)
 }
 
+type Mutation {
+  "Create a new meal."
+  createMeal(input: CreateMealInput!): Meal
+    @field(resolver: "App\\GraphQL\\Mutations\\MealResolver@create")
+}
+
 "Account of a person who utilizes this application."
 type User {
     "Unique primary key."
@@ -38,4 +44,21 @@ type User {
 
     "When the account was last updated."
     updated_at: DateTime!
+}
+
+type Meal {
+  id: ID!
+  name: String!
+  description: String
+  price: Float!
+  category_id: ID
+  created_at: DateTime!
+  updated_at: DateTime!
+}
+
+input CreateMealInput {
+  name: String! @rules(apply: ["required", "string", "max:255"])
+  description: String @rules(apply: ["nullable", "string"])
+  price: Float! @rules(apply: ["required", "numeric", "min:0"])
+  category_id: ID @rules(apply: ["nullable", "exists:meal_categories,id"])
 }
